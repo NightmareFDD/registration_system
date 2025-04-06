@@ -7,5 +7,12 @@ import java.util.Optional;
 
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    /**
+     * Finds a user entity by its unique personal ID.
+     *
+     * @param personID 12-character personal identifier
+     * @return Optional containing user if found, otherwise empty
+     */
     Optional<User> findByPersonID(String personID);
 }

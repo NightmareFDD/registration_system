@@ -5,6 +5,7 @@ import com.engeto.registration_system.dto.UserDTO;
 import com.engeto.registration_system.dto.UserUpdateDTO;
 import com.engeto.registration_system.exception.PersonIdNotAllowedException;
 import com.engeto.registration_system.exception.UserAlreadyExistsException;
+import com.engeto.registration_system.exception.UserNotFoundException;
 import com.engeto.registration_system.mapper.UserMapper;
 import com.engeto.registration_system.repository.UserRepository;
 import com.engeto.registration_system.service.UserService;
@@ -15,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 
@@ -33,43 +33,45 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUser(@NotNull UserCreateDTO dto) {
-        log.info("Creating user with personID: {}", dto.getPersonID());
+        log.debug("Attempting to create user with personID: {}", dto.getPersonID());
         validatePersonId(dto.getPersonID());
-        checkIfUserExists(dto.getPersonID());
+        ensurePersonIdIsUnique(dto.getPersonID());
 
         User user = userMapper.toEntity(dto);
         user.setUuid(generateUuid());
         userRepository.save(user);
-        log.info("User created with ID: {}", user.getId());
+        log.info("User created with ID: {} and UUID: {}", user.getId(), user.getUuid());
     }
 
     @Override
     public UserDTO getUser(Long id, boolean detail) {
+        log.debug("Attempting to get user with ID: {} (detail: {})", id, detail);
         User user = findUserById(id);
         return detail ? userMapper.toDetailDto(user) : userMapper.toDto(user);
     }
 
     @Override
     public List<UserDTO> getAllUsers(boolean detail) {
+        log.debug("Attempting to retrieve all users (detail: {})", detail);
         return userRepository.findAll().stream()
                 .map(user -> detail ? userMapper.toDetailDto(user) : userMapper.toDto(user)).toList();
     }
 
     @Override
     public void updateUser(Long id, @NotNull UserUpdateDTO dto) {
-        log.info("Updating user with ID: {}", id);
+        log.debug("Attempting to update user with ID: {}", id);
         User user = findUserById(id);
         user.setName(dto.getName());
         user.setSurname(dto.getSurname());
         userRepository.save(user);
-        log.info("User updated successfully");
+        log.info("User with ID {} successfully updated", id);
     }
 
     @Override
     public void deleteUser(Long id) {
-        log.warn("Deleting user with ID: {}", id);
+        log.debug("Attempting to delete user with ID: {}", id);
         userRepository.deleteById(id);
-        log.info("User deleted");
+        log.info("User with ID {} deleted successfully", id);
     }
 
     // === Helper methods ===
@@ -80,7 +82,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void checkIfUserExists(String personID) {
+    private void ensurePersonIdIsUnique(String personID) {
         userRepository.findByPersonID(personID).ifPresent(user -> {
             throw new UserAlreadyExistsException("User with personID already exists: " + personID);
         });
@@ -88,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
     private User findUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User with ID " + id + " not found."));
     }
 
     private String generateUuid() {
