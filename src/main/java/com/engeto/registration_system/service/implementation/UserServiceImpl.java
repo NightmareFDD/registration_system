@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
         user.setName(dto.getName());
         user.setSurname(dto.getSurname());
         userRepository.save(user);
-        log.info("User with ID {} successfully updated", id);
+        log.info("User with ID {} updated successfully", id);
     }
 
     @Override
