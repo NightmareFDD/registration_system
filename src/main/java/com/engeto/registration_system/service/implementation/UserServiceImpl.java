@@ -12,6 +12,7 @@ import com.engeto.registration_system.service.UserService;
 import com.engeto.registration_system.entity.User;
 import com.engeto.registration_system.util.PersonIdValidator;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -21,23 +22,19 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
-
     @Override
-    public void createUser(@NotNull UserCreateDTO dto) {
-        log.debug("Attempting to create user with personID: {}", dto.getPersonID());
-        validatePersonId(dto.getPersonID());
-        ensurePersonIdIsUnique(dto.getPersonID());
+    public void createUser(@NotNull UserCreateDTO userCreateDTO) {
+        log.debug("Attempting to create userCreateDTO with personID: {}", userCreateDTO.getPersonID());
+        validatePersonId(userCreateDTO.getPersonID());
+        ensurePersonIdIsUnique(userCreateDTO.getPersonID());
 
-        User user = userMapper.toEntity(dto);
+        User user = userMapper.toEntity(userCreateDTO);
         user.setUuid(generateUuid());
         userRepository.save(user);
         log.info("User created with ID: {} and UUID: {}", user.getId(), user.getUuid());
@@ -45,24 +42,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUser(Long id, boolean detail) {
-        log.debug("Attempting to get user with ID: {} (detail: {})", id, detail);
         User user = findUserById(id);
         return detail ? userMapper.toDetailDto(user) : userMapper.toDto(user);
     }
 
     @Override
     public List<UserDTO> getAllUsers(boolean detail) {
-        log.debug("Attempting to retrieve all users (detail: {})", detail);
         return userRepository.findAll().stream()
                 .map(user -> detail ? userMapper.toDetailDto(user) : userMapper.toDto(user)).toList();
     }
 
     @Override
-    public void updateUser(Long id, @NotNull UserUpdateDTO dto) {
+    public void updateUser(Long id, @NotNull UserUpdateDTO userUpdateDTO) {
         log.debug("Attempting to update user with ID: {}", id);
         User user = findUserById(id);
-        user.setName(dto.getName());
-        user.setSurname(dto.getSurname());
+        user.setName(userUpdateDTO.getName());
+        user.setSurname(userUpdateDTO.getSurname());
         userRepository.save(user);
         log.info("User with ID {} updated successfully", id);
     }

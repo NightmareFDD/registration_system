@@ -1,5 +1,6 @@
 package com.engeto.registration_system.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-
+@AllArgsConstructor
 public class ApiErrorResponse {
     private LocalDateTime timestamp;
     private Integer status;

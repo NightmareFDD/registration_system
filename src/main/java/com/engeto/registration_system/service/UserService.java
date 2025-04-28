@@ -8,9 +8,9 @@ public interface UserService {
     /**
      * Creates a new user from the provided data transfer object.
      *
-     * @param dto the DTO containing data for the new user
+     * @param userCreateDTO the DTO containing data for the new user
      */
-    void createUser(UserCreateDTO dto);
+    void createUser(UserCreateDTO userCreateDTO);
 
     /**
      * Retrieves a user by their ID.
@@ -35,9 +35,9 @@ public interface UserService {
      * Updates the user with the given ID using the provided DTO.
      *
      * @param id  the ID of the user to update
-     * @param dto the DTO containing updated user data
+     * @param userUpdateDTO the DTO containing updated user data
      */
-    void updateUser(Long id, UserUpdateDTO dto);
+    void updateUser(Long id, UserUpdateDTO userUpdateDTO);
 
     /**
      * Deletes the user with the specified ID.
