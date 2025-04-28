@@ -27,6 +27,20 @@ public class PersonIdValidator {
     private final Set<String> allowedIds = loadPersonIds();
 
     /**
+     * Validates whether the given person ID is present in the allowed list.
+     *
+     * @param personId person ID string to validate
+     * @return {@code true} if the person ID is valid; {@code false} otherwise
+     */
+    public boolean isValid(String personId) {
+        boolean valid = allowedIds.contains(personId);
+        logValidation(personId, valid);
+        return valid;
+    }
+
+    // === Helper methods ===
+
+    /**
      * Loads person IDs from the resource file and returns them as a Set.
      *
      * @return set of allowed person ID values
@@ -38,7 +52,8 @@ public class PersonIdValidator {
             log.info("Loaded {} allowed personIDs from '{}'", ids.size(), FILE_NAME);
             return ids;
         } catch (Exception e) {
-            throw handleLoadFailure(e);
+            log.error("Failed to load person ID list from '{}'", FILE_NAME, e);
+            throw new ValidationRuntimeException("Failed to load person ID list");
         }
     }
 
@@ -67,29 +82,6 @@ public class PersonIdValidator {
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
                 .collect(Collectors.toSet());
-    }
-
-    /**
-     * Handles exceptions during resource loading by logging and wrapping into a runtime exception.
-     *
-     * @param e the caught exception
-     * @return wrapped {@link ValidationRuntimeException}
-     */
-    private ValidationRuntimeException handleLoadFailure(Exception e) {
-        log.error("Failed to load person ID list from '{}'", FILE_NAME, e);
-        return new ValidationRuntimeException("Failed to load person ID list");
-    }
-
-    /**
-     * Validates whether the given person ID is present in the allowed list.
-     *
-     * @param personId person ID string to validate
-     * @return {@code true} if the person ID is valid; {@code false} otherwise
-     */
-    public boolean isValid(String personId) {
-        boolean valid = allowedIds.contains(personId);
-        logValidation(personId, valid);
-        return valid;
     }
 
     /**

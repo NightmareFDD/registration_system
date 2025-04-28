@@ -22,9 +22,9 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createUser(@RequestBody @Valid UserCreateDTO userCreateDTO) {
+    public UserDTO  createUser(@RequestBody @Valid UserCreateDTO userCreateDTO) {
         log.info("Received request to create user with personID: {}", userCreateDTO.getPersonID());
-        userService.createUser(userCreateDTO);
+        return userService.createUser(userCreateDTO);
     }
 
     @GetMapping("/{id}")
@@ -41,10 +41,9 @@ public class UserController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String updateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
+    public UserDTO  updateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
         log.info("Received request to update user with ID: {}", id);
-        userService.updateUser(id, userUpdateDTO);
-        return "User with id - " + id + ", updated successfully";
+        return userService.updateUser(id, userUpdateDTO);
     }
 
     @DeleteMapping("/{id}")

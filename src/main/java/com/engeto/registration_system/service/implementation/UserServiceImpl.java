@@ -29,15 +29,17 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public void createUser(@NotNull UserCreateDTO userCreateDTO) {
+    public UserDTO createUser(@NotNull UserCreateDTO userCreateDTO) {
         log.debug("Attempting to create userCreateDTO with personID: {}", userCreateDTO.getPersonID());
         validatePersonId(userCreateDTO.getPersonID());
         ensurePersonIdIsUnique(userCreateDTO.getPersonID());
 
         User user = userMapper.toEntity(userCreateDTO);
         user.setUuid(generateUuid());
-        userRepository.save(user);
+        User saved = userRepository.save(user);
         log.info("User created with ID: {} and UUID: {}", user.getId(), user.getUuid());
+
+        return userMapper.toDto(saved);
     }
 
     @Override
@@ -53,13 +55,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(Long id, @NotNull UserUpdateDTO userUpdateDTO) {
+    public UserDTO updateUser(Long id, @NotNull UserUpdateDTO userUpdateDTO) {
         log.debug("Attempting to update user with ID: {}", id);
         User user = findUserById(id);
         user.setName(userUpdateDTO.getName());
         user.setSurname(userUpdateDTO.getSurname());
-        userRepository.save(user);
+        User updated = userRepository.save(user);
         log.info("User with ID {} updated successfully", id);
+
+        return userMapper.toDto(updated);
     }
 
     @Override

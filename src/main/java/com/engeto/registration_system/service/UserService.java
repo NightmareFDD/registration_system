@@ -1,7 +1,10 @@
 package com.engeto.registration_system.service;
 
+import com.engeto.registration_system.dto.UserCreateDTO;
+import com.engeto.registration_system.dto.UserDTO;
+import com.engeto.registration_system.dto.UserUpdateDTO;
+
 import java.util.List;
-import com.engeto.registration_system.dto.*;
 
 
 public interface UserService {
@@ -9,8 +12,9 @@ public interface UserService {
      * Creates a new user from the provided data transfer object.
      *
      * @param userCreateDTO the DTO containing data for the new user
+     * @return the user data in DTO format
      */
-    void createUser(UserCreateDTO userCreateDTO);
+    UserDTO createUser(UserCreateDTO userCreateDTO);
 
     /**
      * Retrieves a user by their ID.
@@ -34,10 +38,11 @@ public interface UserService {
     /**
      * Updates the user with the given ID using the provided DTO.
      *
-     * @param id  the ID of the user to update
+     * @param id            the ID of the user to update
      * @param userUpdateDTO the DTO containing updated user data
+     * @return the user data in DTO format
      */
-    void updateUser(Long id, UserUpdateDTO userUpdateDTO);
+    UserDTO updateUser(Long id, UserUpdateDTO userUpdateDTO);
 
     /**
      * Deletes the user with the specified ID.

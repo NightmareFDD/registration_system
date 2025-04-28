@@ -5,7 +5,7 @@ import lombok.*;
 
 /**
  * Data Transfer Object used for updating an existing user.
- * Only first and last name are updatable.
+ * Only first and last names are updatable.
  */
 
 @Getter
